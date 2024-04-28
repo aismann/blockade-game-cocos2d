@@ -168,13 +168,13 @@ bool GameLayer::init(){
         try{
             EventMouse *mouseEvent = dynamic_cast<EventMouse*>(event);
             Point mousePos = mouseEvent->getLocationInView() - _blocks_container->getPosition();
-            
-            if(!getBoundingBox().containsPoint(mouseEvent->getLocationInView())) return;
+            CCLOG("%lf %lf %lf %lf",_blocks_container->getBoundingBox().origin.x,_blocks_container->getBoundingBox().origin.y,_blocks_container->getBoundingBox().size.width,_blocks_container->getBoundingBox().size.height);
+            if(!_blocks_container->getBoundingBox().containsPoint(mouseEvent->getLocationInView())) return;
             event->stopPropagation();
             
             int row = (int)std::floor((float)(mousePos.y - getPositionY()) / _edge_size),
                 col = (int)std::floor((float)(mousePos.x - getPositionX()) / _edge_size);
-            
+            CCLOG("%d %d",row,col);
             if(_map[row][col] == 0) return;
             
             int blocks_equals_by_color = getNeighborsByColor(row, col);
@@ -184,10 +184,8 @@ bool GameLayer::init(){
             if(!hasMoves()){
                 finish();
             }
-        }catch(std::bad_cast &err){
-            
-        }catch(std::out_of_range &err){
-            
+        }catch(std::exception &er){
+            CCLOG("123");
         }
     };
     
@@ -235,6 +233,8 @@ void GameLayer::fillMap(){
     Size block_size = Size(_edge_size, _edge_size);
     Size game_view_size = Size(_edge_size * _cols, _edge_size * _rows);
     
+    _blocks_container->setContentSize(game_view_size);
+    
     for(int row = 0; row < _rows; row++){
         for(int col = 0; col < _cols; col++){
             GLuint gl_color = _map.at(row).at(col);
@@ -251,6 +251,7 @@ void GameLayer::fillMap(){
     }
     PhysicsBody *edge_body = PhysicsBody::createEdgeBox(game_view_size , PhysicsMaterial(),0);
    
+    
     _edge_node->setContentSize(game_view_size);
     _edge_node->setPhysicsBody(edge_body);
     
