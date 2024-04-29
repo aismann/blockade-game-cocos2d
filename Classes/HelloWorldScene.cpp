@@ -72,10 +72,7 @@ bool HelloWorld::init()
     
     Size game_layer_size = Size(visibleSize.width, visibleSize.height - menu->getContentSize().height);
     GameLayer *game = GameLayer::create();
-    
     game->setContentSize(game_layer_size);
-    
-    game->setPosition(Vec2(0,0));
     game->runWith(variables::INIT_HEIGHT, variables::INIT_WIDTH,variables::INIT_COLOR);
 
     
@@ -83,16 +80,15 @@ bool HelloWorld::init()
 
     menu->setStartEventCallback(std::bind(&GameLayer::runWith, game, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
     
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
     EventListenerCustom *screen_listener = EventListenerCustom::create(GLViewImpl::EVENT_WINDOW_RESIZED, [game](EventCustom *event){
         Size window_size = Director::getInstance()->getOpenGLView()->getFrameSize();
         Size resolution_size = Director::getInstance()->getVisibleSize();
-        CCLOG("%lf %lf", window_size.width, window_size.height);
-//        game->setScaleX(window_size.width / resolution_size.width);
-//        game->setScaleY(window_size.height / resolution_size.height);
+
     });
     
-    
     _eventDispatcher->addEventListenerWithFixedPriority(screen_listener, 1);
+#endif
 
 
     return true;

@@ -24,16 +24,14 @@ void GameLayer::finish(){
         << std::endl
         << "Осталось: " << _blocks_container->getChildrenCount()
     << " / " << _rows * _cols;
-    Label *label = Label::createWithTTF(buffer.str().c_str(), "fonts/arial.ttf", 36);
+    Label *label = Label::createWithTTF(buffer.str().c_str(), "fonts/font.ttf", 36);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     label->setPosition(getContentSize()/2);
     label->setName("finish_view");
     
     this->addChild(label,999);
 }
-bool GameLayer::onTouchBegan(cocos2d::Touch*, cocos2d::Event*){
-    CCLOG("WORK");
-    
+bool GameLayer::onTouchBegan(cocos2d::Touch*, cocos2d::Event*){    
     return true;
 };
 
@@ -75,8 +73,6 @@ void GameLayer::removeBlockAndNeighbors(int row, int col, int neighbors_blocks){
     if(neighbors_blocks & 0b00000001){
         block_node = getBlockByIndex(row - 1, col);
         if(block_node != nullptr){
-//            block_node->disable();
-//            scheduleOnce([this, block_node](float){_blocks_container->removeChild(block_node);}, 3, "removeChild");
             _blocks_container->removeChild(block_node);
         }
         _map[row - 1][col] = 0;
@@ -84,8 +80,6 @@ void GameLayer::removeBlockAndNeighbors(int row, int col, int neighbors_blocks){
     if(neighbors_blocks & 0b0000010){
         block_node = getBlockByIndex(row, col + 1);
         if(block_node != nullptr){
-//            block_node->disable();
-//            scheduleOnce([this, block_node](float){_blocks_container->removeChild(block_node);}, 3, "removeChild");
             _blocks_container->removeChild(block_node);
         }
         _map[row][col + 1] = 0;
@@ -93,8 +87,6 @@ void GameLayer::removeBlockAndNeighbors(int row, int col, int neighbors_blocks){
     if(neighbors_blocks & 0b0000100){
         block_node = getBlockByIndex(row + 1, col);
         if(block_node != nullptr){
-//            block_node->disable();
-//            scheduleOnce([this, block_node](float){_blocks_container->removeChild(block_node);}, 3, "removeChild");
             _blocks_container->removeChild(block_node);
         }
         _map[row + 1][col] = 0;
@@ -102,8 +94,6 @@ void GameLayer::removeBlockAndNeighbors(int row, int col, int neighbors_blocks){
     if(neighbors_blocks & 0b0001000){
         block_node = getBlockByIndex(row, col - 1);
         if(block_node != nullptr){
-//            block_node->disable();
-//            scheduleOnce([this, block_node](float){_blocks_container->removeChild(block_node);}, 3, "removeChild");
             _blocks_container->removeChild(block_node);
         }
         _map[row][col - 1] = 0;
@@ -112,8 +102,6 @@ void GameLayer::removeBlockAndNeighbors(int row, int col, int neighbors_blocks){
     block_node = getBlockByIndex(row,col);
     if(block_node != nullptr){
         if(block_node != nullptr){
-//            block_node->disable();
-//            scheduleOnce([this, block_node](float){_blocks_container->removeChild(block_node);}, 3, "removeChild");
             _blocks_container->removeChild(block_node);
         }
     }
@@ -168,13 +156,13 @@ bool GameLayer::init(){
         try{
             EventMouse *mouseEvent = dynamic_cast<EventMouse*>(event);
             Point mousePos = mouseEvent->getLocationInView() - _blocks_container->getPosition();
-            CCLOG("%lf %lf %lf %lf",_blocks_container->getBoundingBox().origin.x,_blocks_container->getBoundingBox().origin.y,_blocks_container->getBoundingBox().size.width,_blocks_container->getBoundingBox().size.height);
+
             if(!_blocks_container->getBoundingBox().containsPoint(mouseEvent->getLocationInView())) return;
             event->stopPropagation();
             
             int row = (int)std::floor((float)(mousePos.y - getPositionY()) / _edge_size),
                 col = (int)std::floor((float)(mousePos.x - getPositionX()) / _edge_size);
-            CCLOG("%d %d",row,col);
+     
             if(_map[row][col] == 0) return;
             
             int blocks_equals_by_color = getNeighborsByColor(row, col);
@@ -185,7 +173,7 @@ bool GameLayer::init(){
                 finish();
             }
         }catch(std::exception &er){
-            CCLOG("123");
+            
         }
     };
     
